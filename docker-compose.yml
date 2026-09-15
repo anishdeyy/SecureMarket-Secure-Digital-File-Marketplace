@@ -1,0 +1,102 @@
+version: '3.9'
+
+services:
+  # ── PostgreSQL ──────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: securemarket
+      POSTGRES_PASSWORD: securemarket
+      POSTGRES_DB: securemarket
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U securemarket"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── Redis (for rate limiting) ───────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ── FastAPI Backend ─────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    environment:
+      # App
+      APP_ENV: development
+      DATABASE_URL: postgresql://securemarket:securemarket@postgres:5432/securemarket
+      JWT_SECRET: ${JWT_SECRET:-securemarket-jwt-secret-change-in-production}
+      # AI
+      AI_MODE: ${AI_MODE:-gemini}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-llama3.2:1b}
+      # Storage
+      STORAGE_MODE: ${STORAGE_MODE:-local}
+      LOCAL_STORAGE_PATH: /app/storage
+      # Payment
+      PAYMENT_MODE: ${PAYMENT_MODE:-razorpay}
+      RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID:-}
+      RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET:-}
+      RAZORPAY_WEBHOOK_SECRET: ${RAZORPAY_WEBHOOK_SECRET:-}
+      # Malware
+      MALWARE_SCAN_MODE: ${MALWARE_SCAN_MODE:-mock}
+      # Redis
+      REDIS_URL: redis://redis:6379
+      # AWS (optional)
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      AWS_REGION: ${AWS_REGION:-ap-south-1}
+      AWS_S3_BUCKET: ${AWS_S3_BUCKET:-}
+      # Config
+      MAX_UPLOAD_SIZE_MB: "100"
+      CORS_ORIGINS: '["http://localhost:3000","http://127.0.0.1:3000"]'
+      FRONTEND_URL: http://localhost:3000
+    volumes:
+      - backend_storage:/app/storage
+      - ./backend:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: >
+      sh -c "python seed.py && uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload"
+
+  # ── Next.js Frontend ────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8001
+      NEXT_PUBLIC_APP_NAME: SecureMarket
+      NEXT_PUBLIC_RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID:-rzp_test_TakHtpQ4XoAo5y}
+      NEXT_PUBLIC_PAYMENT_MODE: ${PAYMENT_MODE:-razorpay}
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+  backend_storage:

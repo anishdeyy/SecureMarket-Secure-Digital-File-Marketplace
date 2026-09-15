@@ -1,0 +1,3382 @@
+<USER_REQUEST>
+sha file should not be visible to anyone change this to other things . it is displaced to buyer and seller both it is a backend part that not be visible . also after i buy the product i cant write any review to this product that would save and show to everyone.
+
+I need you to make TWO IMPORTANT product-detail and marketplace changes in the existing SecureMarket project.
+
+I have provided screenshots of the current UI showing the problems.
+
+============================================================
+PART A — HIDE SHA-256 AND INTERNAL CRYPTOGRAPHIC DETAILS
+============================================================
+
+CURRENT PROBLEM:
+
+The product detail page currently exposes technical security implementation details directly to buyers and sellers.
+
+Examples currently visible:
+
+- SHA-256 Verified
+- Cryptographic Hash
+- SHA-256 Digest
+- Cryptographic File Authenticity
+- Integrity Seal
+- HMAC-Protected
+- Live Server-Side Re-hash Audit
+- Copy Digest
+- Re-hash File Now
+
+The full SHA-256 digest is also displayed in the UI.
+
+THIS IS NOT DESIRED.
+
+SHA-256 is an INTERNAL BACKEND SECURITY/INTEGRITY MECHANISM.
+
+It must NOT be exposed to normal buyers or sellers.
+
+============================================================
+A1. SHA-256 MUST REMAIN IN THE BACKEND
+============================================================
+
+DO NOT remove SHA-256 functionality.
+
+Continue using SHA-256 internally for:
+
+- exact duplicate detection
+- file integrity verification
+- upload validation
+- backend audit
+- file fingerprinting
+- integrity checks
+- duplicate-content protection
+
+But do NOT display the actual hash to:
+
+- buyer
+- seller
+- public marketplace visitor
+
+The SHA-256 value must remain internal.
+
+============================================================
+A2. REMOVE FROM PUBLIC / BUYER / SELLER UI
+============================================================
+
+Remove all visible occurrences of:
+
+- SHA-256 Digest
+- SHA-256 Hash
+- Cryptographic Hash
+- Full hash string
+- Copy Digest
+- Re-hash File Now
+- Cryptographic File Authenticity
+- HMAC-Protected
+- HMAC seal
+- Internal cryptographic implementation wording
+- Internal storage/security implementation details
+
+from:
+
+- public product details
+- buyer product page
+- seller product page
+- seller dashboard
+- buyer dashboard
+- marketplace cards
+- home page
+- download page
+- purchase success page
+
+Do NOT expose internal hash values through normal frontend API responses either.
+
+If the frontend receives the complete SHA-256 hash but simply hides it with CSS, that is NOT sufficient.
+
+DO NOT SEND THE HASH TO THE PUBLIC CLIENT AT ALL unless an authenticated admin/security endpoint explicitly requires it.
+
+Security-sensitive backend data should not be returned unnecessarily.
+
+============================================================
+A3. REPLACE TECHNICAL SECURITY SECTION
+============================================================
+
+The current:
+
+"Integrity & Security"
+
+section is too technical.
+
+Replace it with a buyer-friendly section called:
+
+"Product & Download Protection"
+
+OR:
+
+"Security & Delivery"
+
+Use simple customer-friendly cards.
+
+Example:
+
+------------------------------------------------
+
+SECURITY & DELIVERY
+
+✓ Malware scan passed
+The uploaded file passed automated malware checks.
+
+✓ Secure payment
+Your payment is verified before download access is granted.
+
+✓ Protected download
+Your purchased file is delivered through temporary secure access.
+
+✓ File integrity protected
+The marketplace verifies that the stored file has not been unexpectedly modified.
+
+------------------------------------------------
+
+IMPORTANT:
+
+Do NOT mention:
+- SHA-256
+- HMAC
+- cryptographic seal
+- hash digest
+- AWS
+- S3
+- internal object keys
+
+The implementation remains in the backend, but users only see the resulting trust/status.
+
+============================================================
+A4. SECURITY WORDING
+============================================================
+
+Replace technical language:
+
+BAD:
+
+"SHA-256 Integrity Verification"
+
+GOOD:
+
+"File integrity verified"
+
+BAD:
+
+"Cryptographic Hash"
+
+GOOD:
+
+"File verified"
+
+BAD:
+
+"Integrity Seal HMAC-Protected"
+
+GOOD:
+
+"Protected file delivery"
+
+BAD:
+
+"Live Server-Side Re-hash Audit"
+
+GOOD:
+
+"File verification active"
+
+BAD:
+
+"256-bit SSL encrypted checkout"
+
+Do not make unsupported cryptographic claims.
+
+Use:
+
+"Secure checkout"
+
+or:
+
+"Protected payment processing"
+
+ONLY show a status when the backend actually confirms it.
+
+============================================================
+A5. PRODUCT PAGE FINAL SECURITY UI
+============================================================
+
+Recommended buyer-facing layout:
+
+SECURITY & DELIVERY
+
+┌─────────────────────────────────────────────┐
+│ ✓ Malware scan passed                      │
+│ Uploaded file passed security scanning.    │
+└─────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────┐
+│ ✓ File integrity verified                  │
+│ The marketplace verifies the stored file.  │
+└─────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────┐
+│ ✓ Secure payment                           │
+│ Purchase is verified before access.        │
+└─────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────┐
+│ ✓ Protected download                       │
+│ Purchased files are delivered securely.    │
+└─────────────────────────────────────────────┘
+
+This is what the buyer needs to know.
+
+============================================================
+A6. SELLER UI
+============================================================
+
+Seller should see useful operational statuses, but not raw cryptography.
+
+Example:
+
+Product Security
+
+✓ Malware scan passed
+✓ File integrity verified
+✓ Duplicate check passed
+✓ Ready for marketplace
+
+Optional:
+
+"Last security check: Today, 11:42 PM"
+
+Do NOT show:
+
+SHA-256:
+8f84c...
+
+Do NOT show HMAC details.
+
+Do NOT show backend storage keys.
+
+============================================================
+A7. ADMIN / INTERNAL SECURITY UI
+============================================================
+
+IMPORTANT:
+
+Admins may still need technical information.
+
+Keep detailed information available ONLY through a restricted admin/security view.
+
+For example:
+
+Admin → Security Diagnostics
+
+Can show:
+
+SHA-256:
+<full hash>
+
+Integrity check:
+PASSED
+
+Storage:
+verified
+
+Re-hash:
+available
+
+Duplicate fingerprint:
+match/no match
+
+But this endpoint must require ADMIN role.
+
+Do not expose it to:
+BUYER
+SELLER
+PUBLIC
+
+============================================================
+A8. API SECURITY
+============================================================
+
+Inspect product APIs.
+
+Do NOT return something like:
+
+{
+  "sha256_hash": "...",
+  "hmac_signature": "...",
+  "storage_key": "..."
+}
+
+to normal buyer/seller product endpoints.
+
+Instead return:
+
+{
+  "security_status": {
+    "malware_scan": "passed",
+    "integrity_verified": true,
+    "secure_delivery": true
+  }
+}
+
+Internal values remain server-side.
+
+Create separate admin-only endpoint if technical information is required.
+
+Example:
+
+GET /api/admin/products/{id}/security-details
+
+Protected by:
+
+ADMIN role only.
+
+============================================================
+A9. DATABASE
+============================================================
+
+DO NOT delete the SHA-256 database field.
+
+Keep:
+
+sha256_hash
+
+Keep:
+
+storage_key
+
+Keep:
+
+integrity data
+
+Keep:
+
+duplicate fingerprint
+
+But these must not be returned through normal public product queries.
+
+Separate:
+PUBLIC_PRODUCT_SCHEMA
+
+from:
+
+ADMIN_SECURITY_SCHEMA
+
+Example:
+
+PublicProductSchema:
+- title
+- description
+- price
+- category
+- seller
+- quality score
+- file type
+- file size
+- language
+- version
+- security status
+
+AdminSecuritySchema:
+- sha256_hash
+- storage_key
+- normalized_hash
+- scan details
+- integrity details
+- internal audit data
+
+============================================================
+PART B — IMPLEMENT COMPLETE VERIFIED BUYER REVIEW SYSTEM
+============================================================
+
+CURRENT PROBLEM:
+
+The product page currently shows:
+
+"Reviews (0)"
+
+and:
+
+"No reviews yet"
+
+but even after successfully purchasing the product, the buyer cannot submit a review.
+
+THIS MUST BE FIXED.
+
+A buyer who has actually purchased the product must be able to submit a review.
+
+The review must be:
+
+- saved in PostgreSQL
+- associated with the buyer
+- associated with the product
+- associated with the verified purchase/order
+- visible to other users
+- counted in the review total
+- included in the average rating
+- shown on the product page
+- prevented from duplicate review submission unless editing is explicitly supported
+
+============================================================
+B1. VERIFIED PURCHASE REQUIREMENT
+============================================================
+
+Only a user with a successful completed purchase can review a product.
+
+Backend rule:
+
+User must have:
+
+order.status == PAID
+
+and:
+
+order contains product
+
+Only then:
+
+can_review = true
+
+A user who has NOT purchased the product must NOT be able to create a review.
+
+This must be enforced on the backend.
+
+Do NOT rely only on hiding the review button on the frontend.
+
+============================================================
+B2. REVIEW DATABASE MODEL
+============================================================
+
+Inspect the current review schema.
+
+Create or update:
+
+reviews
+
+Fields:
+
+id
+product_id
+user_id
+order_id
+rating
+comment
+created_at
+updated_at
+
+Recommended:
+
+verified_purchase
+boolean
+
+Example:
+
+review:
+product_id = X
+user_id = Y
+order_id = Z
+rating = 5
+comment = "Very useful template."
+verified_purchase = true
+
+============================================================
+B3. UNIQUE REVIEW RULE
+============================================================
+
+By default:
+
+ONE REVIEW PER PURCHASED PRODUCT PER USER.
+
+Add a database-level unique constraint such as:
+
+unique(user_id, product_id)
+
+OR if your business logic supports multiple orders:
+
+unique(user_id, product_id, order_id)
+
+For this project, prefer:
+
+unique(user_id, product_id)
+
+This prevents duplicate review spam.
+
+If the buyer already reviewed the product:
+
+show:
+
+"You already reviewed this product."
+
+and allow:
+
+[Edit Review]
+
+rather than creating another review.
+
+============================================================
+B4. REVIEW API
+============================================================
+
+Create/verify these APIs.
+
+GET:
+
+GET /api/products/{product_id}/reviews
+
+Returns:
+
+reviews
+average_rating
+review_count
+
+POST:
+
+POST /api/products/{product_id}/reviews
+
+Request:
+
+{
+  "rating": 5,
+  "comment": "Excellent resource."
+}
+
+Backend must:
+
+1. Authenticate user.
+2. Verify product exists.
+3. Verify successful purchase.
+4. Verify order contains product.
+5. Verify user owns that order.
+6. Check user has not already reviewed.
+7. Validate rating.
+8. Validate comment.
+9. Create review.
+10. Return saved review.
+
+============================================================
+B5. EDIT REVIEW
+============================================================
+
+Implement:
+
+PUT /api/reviews/{review_id}
+
+Only the review owner may edit their review.
+
+Allow:
+
+rating
+comment
+
+Do NOT allow editing:
+
+user_id
+product_id
+order_id
+verified_purchase
+
+These are controlled by backend.
+
+============================================================
+B6. DELETE REVIEW
+============================================================
+
+Optional but recommended:
+
+DELETE /api/reviews/{review_id}
+
+Only:
+- review owner
+- admin
+
+may delete.
+
+Admin deletion must be logged.
+
+============================================================
+B7. RATING VALIDATION
+============================================================
+
+Rating must be integer:
+
+1
+2
+3
+4
+5
+
+No:
+
+0
+6
+4.5
+10
+
+unless the existing UX explicitly uses half-stars.
+
+For this project, use:
+
+1-5 integer stars.
+
+Backend validates it.
+
+============================================================
+B8. COMMENT VALIDATION
+============================================================
+
+Validate:
+
+- minimum reasonable length
+- maximum length
+- trim whitespace
+- reject empty comments if required
+- prevent basic XSS
+
+Never render raw HTML from reviews.
+
+Treat review content as plain text.
+
+============================================================
+B9. REVIEW UI FOR BUYER WHO PURCHASED
+============================================================
+
+After purchase, the buyer should see:
+
+"Enjoying this product?"
+
+or:
+
+"Share your experience"
+
+Then:
+
+★★★★★
+
+"Write a review..."
+
+Textarea.
+
+Button:
+
+[Submit Review]
+
+Example:
+
+Rate this product
+
+☆ ☆ ☆ ☆ ☆
+
+[ Tell other buyers what you think... ]
+
+[Submit Review]
+
+After submission:
+
+"Review published"
+
+Then the new review should immediately appear.
+
+============================================================
+B10. REVIEW TAB
+============================================================
+
+The current tab:
+
+Reviews (0)
+
+must become dynamically driven.
+
+If there are no reviews:
+
+Reviews (0)
+
+"No reviews yet"
+
+If there are 3 reviews:
+
+Reviews (3)
+
+Average:
+
+4.7
+
+Only calculate this from real database reviews.
+
+DO NOT use fake values.
+
+============================================================
+B11. VERIFIED PURCHASE BADGE
+============================================================
+
+Every genuine buyer review should show:
+
+✓ Verified Purchase
+
+Example:
+
+★★★★★
+"Very useful presentation and easy to understand."
+
+✓ Verified Purchase
+buyer1
+Sep 12, 2026
+
+This badge must be generated by the backend because it is based on purchase verification.
+
+Do NOT allow the frontend to claim:
+
+"Verified Purchase"
+
+without backend confirmation.
+
+============================================================
+B12. REVIEW DISPLAY
+============================================================
+
+Product page:
+
+Reviews
+
+4.8
+★★★★★
+12 reviews
+
+ONLY if:
+12 real reviews exist.
+
+Example:
+
+4.8
+★★★★★
+12 verified reviews
+
+Then list:
+
+★★★★★
+"Very useful resource."
+
+✓ Verified Purchase
+
+Anish
+Sep 12, 2026
+
+------------------------------------------------
+
+Another:
+
+★★★★☆
+"Good content, but could use more examples."
+
+✓ Verified Purchase
+
+Rahul
+Sep 11, 2026
+
+No fake reviews.
+
+============================================================
+B13. AVERAGE RATING
+============================================================
+
+Backend should calculate:
+
+average_rating
+
+from actual review records.
+
+Example:
+
+ratings:
+
+5
+5
+4
+4
+5
+
+Average:
+
+4.6
+
+Do NOT hardcode:
+
+4.8
+
+Do NOT calculate from product metadata.
+
+Do NOT take the seller-entered rating.
+
+The database is the source of truth.
+
+============================================================
+B14. REVIEW COUNT
+============================================================
+
+Review count must be:
+
+COUNT(real review rows)
+
+Do not store a fake static review count in the frontend.
+
+Either:
+
+calculate dynamically
+
+OR maintain a database aggregate carefully.
+
+Frontend receives:
+
+review_count
+
+from backend.
+
+============================================================
+B15. AFTER REVIEW SUBMISSION
+============================================================
+
+When buyer submits:
+
+POST /api/products/{id}/reviews
+
+The UI should:
+
+1. show loading state
+2. prevent double submission
+3. save review
+4. refresh product reviews
+5. recalculate average
+6. update review count
+7. show success toast
+8. clear/close form
+
+Example:
+
+"Your review has been published."
+
+Then:
+
+Reviews (1)
+
+5.0
+★★★★★
+1 verified review
+
+The new review appears immediately.
+
+============================================================
+B16. PRODUCT PAGE FOR UNPURCHASED BUYER
+============================================================
+
+If user has NOT purchased:
+
+Do NOT show an active review form.
+
+Instead show:
+
+"Purchase this product to leave a verified review."
+
+Button:
+
+[Buy Now]
+
+If logged out:
+
+"Sign in and purchase this product to leave a review."
+
+============================================================
+B17. PRODUCT PAGE FOR PURCHASED BUYER
+============================================================
+
+If:
+
+purchase exists
+AND
+review does not exist
+
+show:
+
+"Leave a Review"
+
+If:
+
+purchase exists
+AND
+review already exists
+
+show:
+
+"Your Review"
+
+and:
+
+[Edit Review]
+
+============================================================
+B18. SELLER MUST NOT REVIEW OWN PRODUCT
+============================================================
+
+If seller owns product:
+
+seller cannot create a review.
+
+Backend must enforce:
+
+reviewer.user_id != product.seller_id
+
+Return:
+
+"You cannot review your own product."
+
+Do not rely on frontend only.
+
+============================================================
+B19. ADMIN REVIEW MODERATION
+============================================================
+
+Create basic moderation support.
+
+Admin can:
+
+- view reviews
+- hide inappropriate reviews
+- delete reviews
+- restore review if appropriate
+
+Optional field:
+
+review_status
+
+ACTIVE
+HIDDEN
+DELETED
+
+Only ACTIVE reviews count toward rating.
+
+If admin hides a review:
+
+rating average and review count should recalculate from active reviews.
+
+============================================================
+B20. AUDIT LOGGING FOR REVIEWS
+============================================================
+
+Log:
+
+REVIEW_CREATED
+REVIEW_UPDATED
+REVIEW_DELETED
+REVIEW_HIDDEN
+REVIEW_RESTORED
+
+Include:
+
+user_id
+review_id
+product_id
+timestamp
+
+Do not log sensitive information unnecessarily.
+
+============================================================
+PART C — PRODUCT PAGE REDESIGN
+============================================================
+
+After these changes, redesign the current tabs slightly.
+
+CURRENT:
+
+Product Overview
+AI Quality
+Integrity & Security
+Reviews
+
+Recommended:
+
+Product Overview
+AI Quality
+Security & Delivery
+Reviews
+
+This is more user-friendly.
+
+============================================================
+C1. SECURITY TAB
+============================================================
+
+Use:
+
+Security & Delivery
+
+Display:
+
+✓ Malware Scan Passed
+✓ File Integrity Verified
+✓ Secure Payment
+✓ Protected Download
+
+Do NOT expose:
+
+SHA-256
+HMAC
+cryptographic digest
+storage key
+
+============================================================
+C2. AI QUALITY TAB
+============================================================
+
+Keep:
+
+AI Quality
+
+Example:
+
+59 / 100
+Medium
+
+Content Quality
+Completeness
+Structure
+Usability
+
+Strengths
+
+Potential limitations
+
+Confidence
+
+This is the user-facing AI feature.
+
+============================================================
+C3. REVIEWS TAB
+============================================================
+
+Show:
+
+Average rating
+review count
+verified reviews
+
+For buyers who purchased:
+
+show review form.
+
+For buyers who did not:
+
+show:
+"Purchase this product to leave a verified review."
+
+============================================================
+PART D — PRODUCT CARD
+============================================================
+
+Marketplace cards should show:
+
+Product name
+Category
+AI Quality Score
+Price
+Seller
+Review rating ONLY if genuine reviews exist
+
+If zero reviews:
+
+Do not show:
+
+★★★★★ 0
+
+Instead:
+
+"No reviews yet"
+
+or simply omit the review rating.
+
+============================================================
+PART E — HEADER / SELLER / BUYER PRIVACY
+============================================================
+
+Search the entire frontend for technical security information.
+
+Remove public display of:
+
+sha256
+hash
+digest
+hmac
+storage_key
+signed URL
+S3 key
+AWS bucket
+internal ID
+
+Do NOT remove backend functionality.
+
+============================================================
+PART F — API SCHEMA SEPARATION
+============================================================
+
+Create separate schemas.
+
+PUBLIC PRODUCT RESPONSE:
+
+{
+  id,
+  title,
+  description,
+  price,
+  category,
+  quality_score,
+  file_type,
+  file_size,
+  language,
+  version,
+  content_type,
+  seller,
+  security_status,
+  review_summary
+}
+
+SECURITY ADMIN RESPONSE:
+
+{
+  sha256_hash,
+  storage_key,
+  normalized_content_hash,
+  malware_scan_details,
+  integrity_details,
+  audit_information
+}
+
+Never mix these unnecessarily.
+
+============================================================
+PART G — REVIEW TESTING
+============================================================
+
+Create tests for:
+
+TEST 1:
+User buys product.
+
+Expected:
+can_review = true
+
+TEST 2:
+User has not bought product.
+
+Expected:
+403 when attempting POST review
+
+TEST 3:
+User reviews product.
+
+Expected:
+review saved
+
+TEST 4:
+Review appears on product page.
+
+Expected:
+visible to everyone
+
+TEST 5:
+Average recalculates.
+
+Expected:
+correct
+
+TEST 6:
+Review count increments.
+
+Expected:
+correct
+
+TEST 7:
+User tries second review.
+
+Expected:
+blocked / edit existing review
+
+TEST 8:
+Seller tries reviewing own product.
+
+Expected:
+blocked
+
+TEST 9:
+Another user cannot edit review.
+
+Expected:
+403
+
+TEST 10:
+Admin hides review.
+
+Expected:
+review disappears from public list
+rating recalculates
+
+TEST 11:
+Review contains HTML/script.
+
+Expected:
+sanitized/escaped
+
+TEST 12:
+User not logged in.
+
+Expected:
+cannot submit review
+
+============================================================
+PART H — SECURITY TESTING
+============================================================
+
+Confirm that SHA-256 is NOT exposed in normal responses.
+
+Test:
+
+GET /api/products/{id}
+
+Expected:
+no sha256_hash
+
+GET /api/products/{id}/reviews
+
+Expected:
+no sha256_hash
+
+GET /api/products/{id}/download
+
+Expected:
+download authorization information only
+no raw hash
+
+ADMIN endpoint:
+only admin can retrieve full hash.
+
+============================================================
+PART I — DATABASE MIGRATION
+============================================================
+
+Inspect existing schemas before modifying.
+
+If review table already exists:
+upgrade it.
+
+If necessary add:
+
+verified_purchase
+review_status
+updated_at
+
+Ensure proper foreign keys.
+
+Create unique constraints.
+
+Do not destroy existing valid data.
+
+============================================================
+PART J — FINAL USER EXPERIENCE
+============================================================
+
+BUYER:
+
+Product page
+
+----------------------------
+
+Product
+₹1,000
+
+AI Quality
+59 / 100
+
+Security & Delivery
+
+✓ Malware scan passed
+✓ File integrity verified
+✓ Secure payment
+✓ Protected download
+
+Reviews (2)
+
+4.5
+★★★★★
+
+★★★★★
+"Great presentation."
+
+✓ Verified Purchase
+buyer1
+
+★★★★☆
+"Good resource."
+
+✓ Verified Purchase
+user2
+
+----------------------------
+
+If buyer purchased but hasn't reviewed:
+
+"Share your experience"
+
+☆ ☆ ☆ ☆ ☆
+
+[Write your review...]
+
+[Submit Review]
+
+----------------------------
+
+If buyer has not purchased:
+
+"No reviews yet"
+
+"Purchase this product to leave a verified review."
+
+----------------------------
+
+No SHA-256 visible anywhere.
+
+============================================================
+PART K — IMPORTANT DATA PRIVACY RULE
+============================================================
+
+The frontend must not merely hide the hash with CSS.
+
+Do NOT send internal security fields to the client at all.
+
+Bad:
+
+API returns:
+
+{
+  "sha256_hash": "abcdef..."
+}
+
+and frontend doesn't render it.
+
+Good:
+
+API returns no hash at all.
+
+Internal security fields should only be returned by ADMIN-only endpoints when genuinely required.
+
+============================================================
+PART L — FINAL ACCEPTANCE CRITERIA
+============================================================
+
+The implementation is complete ONLY when:
+
+SECURITY:
+
+[ ] SHA-256 remains functional
+[ ] SHA-256 is not visible to buyers
+[ ] SHA-256 is not visible to sellers
+[ ] SHA-256 is not returned by normal product APIs
+[ ] SHA-256 is available only to protected admin/security endpoints
+[ ] HMAC details hidden
+[ ] Storage keys hidden
+[ ] Signed URL internals hidden
+[ ] Buyer sees friendly security statuses
+[ ] Seller sees friendly security statuses
+
+REVIEWS:
+
+[ ] Buyer can review after successful purchase
+[ ] Unpurchased user cannot review
+[ ] Seller cannot review own product
+[ ] Review saved to PostgreSQL
+[ ] Review associated with user/product/order
+[ ] Verified Purchase badge generated from backend
+[ ] One review per buyer/product
+[ ] Existing review can be edited
+[ ] Review appears to everyone after submission
+[ ] Average rating recalculates
+[ ] Review count recalculates
+[ ] No fake rating values
+[ ] No fake review counts
+[ ] Hidden reviews excluded from rating
+[ ] Review XSS protected
+[ ] Admin moderation works
+[ ] Review audit logging works
+
+UI:
+
+[ ] "Integrity & Security" renamed to "Security & Delivery"
+[ ] Technical cryptography wording removed
+[ ] AI Quality remains visible
+[ ] Genuine reviews displayed
+[ ] Review form visible to eligible purchaser
+[ ] Product cards show genuine ratings only
+[ ] No fake 4.8/12 review data
+
+============================================================
+PART M — FINAL VERIFICATION
+============================================================
+
+After implementation:
+
+1. Login as seller.
+2. Open a product.
+3. Confirm SHA-256 is not visible.
+4. Inspect browser Network/API responses.
+5. Confirm SHA-256 is not in normal product JSON.
+6. Login as buyer.
+7. Purchase product using existing payment flow.
+8. Return to product page.
+9. Confirm "Write a review" appears.
+10. Submit:
+   Rating = 5
+   Comment = "Very useful resource."
+11. Confirm success message.
+12. Refresh page.
+13. Confirm review remains.
+14. Confirm:
+    Reviews (1)
+    5.0
+    Verified Purchase
+15. Open product as another user.
+16. Confirm review is visible.
+17. Confirm average/count are updated.
+18. Attempt second review.
+19. Confirm it is blocked or converted to Edit Review.
+20. Attempt review as seller.
+21. Confirm blocked.
+22. Test admin moderation.
+23. Run backend tests.
+24. Run frontend tests.
+25. Run lint.
+26. Run production build.
+
+Commands:
+
+npm run lint
+npm run build
+
+Backend:
+
+pytest
+
+Fix every error before finishing.
+
+============================================================
+FINAL REPORT
+============================================================
+
+After completing the work, report:
+
+1. Root cause of SHA-256 exposure
+2. Files changed to hide internal security data
+3. API/schema changes
+4. Database migration changes
+5. Review flow implemented
+6. Review authorization rules
+7. Review calculation logic
+8. Tests executed
+9. Lint result
+10. Build result
+
+Do not just explain what should be done.
+
+Actually inspect the existing SecureMarket codebase, implement the changes, test them, and fix any resulting issues.
+
+also pricing should be maxing somewhere based on metadata or file details otherwise people would set price more for just a txt file .
+
+I need you to implement a COMPLETE dynamic pricing and maximum-price protection system for SecureMarket.
+
+I have attached a screenshot showing the current problem.
+
+CURRENT PROBLEM:
+
+Products can currently be listed at unrealistic prices regardless of what the file actually contains.
+
+Example from the current marketplace:
+
+- TXT file
+- File size: approximately 12 B
+- Very low content
+- Price: ₹1,00,000
+
+Other examples:
+- simple presentation
+- extremely high price
+- low quality/content
+- no meaningful relationship between file value and asking price
+
+THIS MUST BE FIXED.
+
+The seller should NOT be able to enter an arbitrary price that is far beyond what the file/content reasonably supports.
+
+============================================================
+1. PRIMARY GOAL
+============================================================
+
+Implement a:
+
+DYNAMIC PRICE CEILING ENGINE
+
+The engine should determine:
+
+1. Minimum allowed price
+2. Suggested price
+3. Maximum allowed price
+4. Listing risk level
+
+The seller may choose any price within the allowed range.
+
+Example:
+
+Suggested price:
+₹499
+
+Maximum allowed:
+₹2,499
+
+Seller can choose:
+
+₹499
+₹799
+₹1,299
+₹2,499
+
+Seller CANNOT choose:
+
+₹1,00,000
+
+The backend must enforce this.
+
+============================================================
+2. VERY IMPORTANT PRINCIPLE
+============================================================
+
+Do NOT determine price from file size alone.
+
+A large file is not automatically valuable.
+
+A small file is not automatically worthless.
+
+Use multiple signals.
+
+Potential signals:
+
+- content type
+- category
+- subcategory
+- meaningful content quantity
+- page/slide/sheet count
+- extracted text length
+- quality score
+- completeness score
+- structure score
+- usability score
+- difficulty
+- target audience
+- number of useful sections
+- presence of examples
+- presence of templates/resources
+- seller history
+- seller verification
+- existing marketplace information
+- product uniqueness
+- actual content depth
+- file format
+- product version
+- number of included assets
+- AI quality analysis
+- historical sales where available
+
+============================================================
+3. DO NOT USE FILE SIZE AS PRIMARY PRICE VALUE
+============================================================
+
+Do NOT implement:
+
+price = file_size_MB * fixed_rate
+
+That would be easily exploitable.
+
+Use content and product characteristics.
+
+Examples:
+
+12-byte TXT:
+very low maximum price
+
+10-page useful guide:
+moderate ceiling
+
+100-page comprehensive guide:
+higher ceiling
+
+Professional design bundle containing 100 useful assets:
+higher ceiling
+
+Source-code project with substantial documentation:
+potentially higher ceiling
+
+But all of these must still respect configurable marketplace limits.
+
+============================================================
+4. SEPARATE THESE CONCEPTS
+============================================================
+
+Create three distinct concepts:
+
+A. AI Suggested Price
+
+What Gemini estimates as a reasonable marketplace price based on content.
+
+B. Platform Price Ceiling
+
+The maximum price the system allows based on deterministic marketplace rules.
+
+C. Seller Asking Price
+
+The actual price selected by the seller.
+
+The seller can choose the asking price only if:
+
+minimum_price <= seller_price <= maximum_price
+
+============================================================
+5. GEMINI SHOULD NOT CONTROL THE FINAL PRICE
+============================================================
+
+Gemini may generate:
+
+recommended_price
+
+BUT:
+
+Gemini MUST NOT be the final authority.
+
+Do NOT trust:
+
+Gemini says ₹10,00,000
+
+therefore:
+
+allow ₹10,00,000
+
+Instead:
+
+Gemini:
+suggested price = ₹1,200
+
+Backend:
+maximum price = ₹3,000
+
+Seller:
+can choose ₹500-₹3,000
+
+The backend remains authoritative.
+
+============================================================
+6. GEMINI METADATA / PRICING PROMPT
+============================================================
+
+Update the existing Gemini metadata prompt to include an optional pricing analysis.
+
+Use this predefined prompt:
+
+------------------------------------------------------------
+
+You are an AI-assisted metadata and pricing advisor for SecureMarket, a Web2 digital file marketplace.
+
+Analyze the uploaded digital product using only information actually present in the file and the supplied technical metadata.
+
+Generate useful marketplace metadata and provide a reasonable suggested price range.
+
+IMPORTANT:
+
+1. Do not invent content.
+2. Do not exaggerate the value of the product.
+3. Do not assume a large file is automatically more valuable.
+4. Do not assume a small file is automatically low quality.
+5. Consider usefulness, completeness, depth, structure and target audience.
+6. Consider the type of product and typical use case.
+7. Do not make legal or financial guarantees.
+8. Do not decide the platform's final maximum allowed price.
+9. The marketplace backend will enforce pricing limits.
+10. Return ONLY valid JSON.
+
+Return:
+
+{
+  "title": "...",
+  "short_description": "...",
+  "summary": "...",
+  "category": "...",
+  "subcategory": "...",
+  "tags": [],
+  "keywords": [],
+  "language": "...",
+  "difficulty": "...",
+  "content_type": "...",
+  "target_audience": "...",
+  "key_topics": [],
+
+  "pricing_analysis": {
+    "suggested_price_min": 0,
+    "suggested_price_max": 0,
+    "recommended_price": 0,
+    "pricing_confidence": 0,
+    "pricing_factors": [
+      "..."
+    ]
+  },
+
+  "quality_analysis": {
+    "quality_score": 0,
+    "content_quality_score": 0,
+    "completeness_score": 0,
+    "structure_score": 0,
+    "usability_score": 0
+  }
+}
+
+Pricing should be based on:
+- content depth
+- usefulness
+- completeness
+- complexity
+- target audience
+- practical value
+- asset quantity where applicable
+- document structure
+- quality
+
+Do not use file size as the sole pricing factor.
+
+If there is insufficient evidence to estimate value, use a conservative price suggestion and lower pricing confidence.
+
+------------------------------------------------------------
+
+============================================================
+7. BACKEND PRICE CEILING ENGINE
+============================================================
+
+Create:
+
+backend/app/services/pricing_service.py
+
+Responsibilities:
+
+- calculate minimum price
+- calculate suggested price
+- calculate maximum allowed price
+- calculate listing price risk
+- validate seller price
+- explain the price ceiling
+- prevent bypass
+
+The backend must be authoritative.
+
+============================================================
+8. PROPOSED PRICING MODEL
+============================================================
+
+Use a weighted scoring model.
+
+Create a Product Value Score:
+
+0-100
+
+Suggested dimensions:
+
+Content depth:
+25%
+
+Quality score:
+20%
+
+Completeness:
+15%
+
+Usability:
+15%
+
+Structure:
+10%
+
+Target audience/value:
+10%
+
+Technical/product signals:
+5%
+
+Total:
+100
+
+Do not use file size as a major independent score.
+
+============================================================
+9. VALUE SCORE EXAMPLES
+============================================================
+
+Example A:
+
+12-byte TXT containing:
+"DKM Details."
+
+Expected:
+
+Content depth:
+very low
+
+Completeness:
+very low
+
+Quality:
+very low
+
+Value score:
+very low
+
+Maximum allowed price:
+very low
+
+Example target:
+
+Suggested:
+₹10-₹50
+
+Maximum:
+₹100-₹250
+
+Make these values configurable rather than hardcoded.
+
+============================================================
+10. EXAMPLE — 50 PAGE EDUCATIONAL PDF
+============================================================
+
+Suppose:
+
+50 pages
+35,000 words
+clear headings
+examples
+exercises
+good structure
+quality score 85
+completeness 90
+
+Then:
+
+Value Score:
+high
+
+Suggested:
+possibly ₹499-₹999
+
+Maximum:
+perhaps ₹2,999-₹4,999
+
+The exact numbers must come from configurable pricing rules.
+
+============================================================
+11. EXAMPLE — DESIGN ASSET PACK
+============================================================
+
+Suppose:
+
+ZIP
+contains:
+80 useful design assets
+preview images
+documentation
+commercial-use information
+
+Then:
+asset_count contributes to value.
+
+Potential:
+
+Suggested:
+₹999
+
+Maximum:
+₹4,999
+
+Again:
+configurable.
+
+============================================================
+12. EXAMPLE — SOURCE CODE PRODUCT
+============================================================
+
+Suppose:
+
+Source code project
+multiple modules
+documentation
+setup instructions
+example configuration
+README
+quality score 90
+
+It may have a higher suggested price.
+
+But:
+
+price must still stay below platform maximum.
+
+============================================================
+13. EXAMPLE — LOW CONTENT HIGH PRICE
+============================================================
+
+If seller attempts:
+
+12-byte TXT
+price:
+₹1,00,000
+
+Backend:
+
+Value score:
+5
+
+Maximum:
+₹100
+
+Result:
+
+BLOCK.
+
+Return:
+
+{
+  "allowed": false,
+  "reason": "PRICE_EXCEEDS_PLATFORM_LIMIT",
+  "suggested_price": 25,
+  "maximum_price": 100
+}
+
+Frontend:
+
+"Price exceeds the maximum allowed for this product."
+
+============================================================
+14. HARD PRICE CEILING
+============================================================
+
+Create a platform-wide absolute maximum.
+
+Example:
+
+MAX_PLATFORM_PRICE_INR = 100000
+
+But this should NOT be the normal maximum.
+
+It is an emergency/global ceiling.
+
+Then product-specific ceiling is calculated below it.
+
+Final:
+
+maximum_price =
+min(
+  product_calculated_ceiling,
+  global_platform_ceiling
+)
+
+This prevents a bug in the pricing model from allowing absurd prices.
+
+============================================================
+15. CATEGORY PRICE LIMITS
+============================================================
+
+Add configurable category-level limits.
+
+Example configuration:
+
+Programming:
+max ₹25,000
+
+Design:
+max ₹20,000
+
+Documents:
+max ₹10,000
+
+Education:
+max ₹15,000
+
+Templates:
+max ₹10,000
+
+Graphics:
+max ₹20,000
+
+Other:
+max ₹5,000
+
+These are examples only.
+
+Store them in configuration/database so admin can change them.
+
+============================================================
+16. CONTENT-TYPE PRICE LIMITS
+============================================================
+
+Also create sensible content-type constraints.
+
+Examples:
+
+Simple TXT:
+low ceiling
+
+Basic document:
+low/moderate ceiling
+
+Presentation:
+moderate ceiling
+
+Educational course:
+higher ceiling
+
+Source-code project:
+higher ceiling
+
+Asset bundle:
+higher ceiling
+
+But category and content type must work together.
+
+============================================================
+17. PRICE CEILING FORMULA
+============================================================
+
+Implement a transparent deterministic formula.
+
+Example concept:
+
+base_ceiling =
+category_base_limit
+
+value_multiplier =
+0.5 + value_score / 100
+
+quality_multiplier =
+0.75 + quality_score / 200
+
+complexity_multiplier =
+based on difficulty / product complexity
+
+content_multiplier =
+based on meaningful content amount,
+asset count,
+page count,
+slides,
+etc.
+
+calculated_ceiling =
+base_ceiling
+* value_multiplier
+* quality_multiplier
+* complexity_multiplier
+* content_multiplier
+
+Then clamp:
+
+minimum_price <= ceiling <= global_max
+
+IMPORTANT:
+
+Do not produce uncontrolled exponential values.
+
+Use hard min/max clamps.
+
+============================================================
+18. VERY IMPORTANT — CONTENT QUANTITY
+============================================================
+
+Extract meaningful content statistics.
+
+For documents:
+
+- page count
+- word count
+- character count
+- paragraph count
+- heading count
+
+For PPTX:
+
+- slide count
+- text count
+- meaningful slide count
+
+For DOCX:
+
+- page count where available
+- paragraph count
+- word count
+- heading count
+
+For XLSX:
+
+- workbook sheets
+- non-empty cells
+- formulas
+- tables
+
+For ZIP:
+
+- number of files
+- total size
+- file-type distribution
+- safe asset count
+
+For source code:
+
+- number of files
+- code lines
+- documentation
+- language count
+
+Do NOT execute code.
+
+These statistics help the pricing engine understand what is actually inside the product.
+
+============================================================
+19. MEANINGFUL CONTENT VS RAW FILE SIZE
+============================================================
+
+Very important.
+
+For a 100 KB file:
+
+If it contains:
+useful 20-page guide
+
+it may have meaningful value.
+
+For a 100 MB file:
+
+If it contains:
+duplicated images or empty files
+
+it may have low value.
+
+Therefore:
+
+content analysis > raw file size.
+
+============================================================
+20. QUALITY SCORE INTEGRATION
+============================================================
+
+Use the existing AI Quality Score.
+
+Example:
+
+Quality:
+59 / 100
+
+Content:
+40
+
+Completeness:
+30
+
+Structure:
+55
+
+Usability:
+45
+
+This should reduce the maximum allowed price.
+
+A low-quality product cannot simply receive a high price.
+
+============================================================
+21. DUPLICATE DETECTION INTEGRATION
+============================================================
+
+If duplicate detection says:
+
+DUPLICATE
+
+then:
+do not allow a new listing regardless of price.
+
+If:
+
+SIMILAR CONTENT
+and
+quality low
+
+increase listing review risk.
+
+If:
+unique + high quality
+
+normal pricing rules.
+
+============================================================
+22. SELLER PRICE UI
+============================================================
+
+Replace the current simple price input.
+
+Instead show:
+
+Set your price
+
+₹ [ 499 ]
+
+Suggested price:
+₹399 - ₹799
+
+Recommended:
+₹599
+
+Maximum allowed:
+₹2,499
+
+Example:
+
+---------------------------------
+
+Your price
+₹599
+
+AI suggested:
+₹399-₹799
+
+Marketplace limit:
+Up to ₹2,499
+
+✓ Price within allowed range
+
+---------------------------------
+
+If seller enters:
+
+₹50,000
+
+show:
+
+---------------------------------
+
+⚠ Price exceeds marketplace limit
+
+Maximum allowed:
+₹2,499
+
+Suggested range:
+₹399-₹799
+
+Please choose a lower price.
+
+---------------------------------
+
+The Publish button must be disabled.
+
+============================================================
+23. FRONTEND VALIDATION
+============================================================
+
+Frontend should validate the price immediately.
+
+But frontend validation is NOT enough.
+
+Backend must validate again.
+
+Example:
+
+POST /api/products
+
+price:
+500000
+
+Backend calculates:
+
+max_allowed_price:
+2499
+
+Return:
+
+400 PRICE_LIMIT_EXCEEDED
+
+The frontend must not be able to bypass this.
+
+============================================================
+24. BACKEND PRICE VALIDATION
+============================================================
+
+Create:
+
+POST /api/pricing/validate
+
+or integrate into:
+
+POST /api/products
+
+Request:
+
+{
+  "product_id": "...",
+  "price": 50000
+}
+
+Response:
+
+{
+  "allowed": false,
+  "suggested_price": 599,
+  "minimum_price": 49,
+  "maximum_price": 2499,
+  "reason": "PRICE_EXCEEDS_PLATFORM_LIMIT"
+}
+
+============================================================
+25. UPDATE PRODUCT PRICE
+============================================================
+
+Price validation must also happen when seller edits an existing product.
+
+PATCH:
+
+/api/products/{id}
+
+If price changes:
+
+recalculate price eligibility.
+
+Do NOT allow:
+
+₹500
+→ edit
+→ ₹5,00,000
+
+without validation.
+
+============================================================
+26. EXISTING PRODUCTS
+============================================================
+
+IMPORTANT:
+
+You already have products in the database with unrealistic prices.
+
+Example from screenshot:
+
+₹1,00,000
+₹50,000
+₹5,00,000
+
+Do NOT automatically delete them.
+
+Run a migration or recalculation script:
+
+scripts/recalculate_product_pricing.py
+
+For every existing product:
+
+1. calculate value metrics
+2. retrieve existing quality score
+3. calculate suggested price
+4. calculate max price
+5. determine status
+
+Possible statuses:
+
+PRICE_VALID
+PRICE_REVIEW
+PRICE_EXCEEDS_LIMIT
+
+If price exceeds ceiling:
+
+do NOT immediately destroy the product.
+
+Mark:
+
+PRICE_REVIEW
+
+Admin can then:
+- adjust price
+- approve exception
+- suspend listing
+
+============================================================
+27. ADMIN PRICE MANAGEMENT
+============================================================
+
+Create:
+
+Admin → Pricing Rules
+
+Allow admin to configure:
+
+Global max price
+Category max price
+Minimum price
+Price multipliers
+Quality multipliers
+High-price review threshold
+
+Example:
+
+Global Maximum:
+₹1,00,000
+
+Programming:
+₹25,000
+
+Design:
+₹20,000
+
+Documents:
+₹10,000
+
+Education:
+₹15,000
+
+Templates:
+₹10,000
+
+Use a clean admin UI.
+
+============================================================
+28. ADMIN PRICE REVIEW
+============================================================
+
+Create:
+
+Admin → Price Review Queue
+
+Show:
+
+Product
+Seller
+Price
+Suggested
+Maximum
+Quality
+Value Score
+Status
+
+Example:
+
+DKM Details Document
+
+Price:
+₹1,00,000
+
+Suggested:
+₹25
+
+Maximum:
+₹100
+
+Quality:
+59
+
+Value Score:
+8
+
+Status:
+BLOCKED
+
+Another:
+
+Advanced Python Course
+
+Price:
+₹4,999
+
+Suggested:
+₹1,999
+
+Maximum:
+₹5,999
+
+Status:
+APPROVED
+
+============================================================
+29. HIGH-PRICE ALERT
+============================================================
+
+Even when price is within the absolute maximum, flag unusually high pricing.
+
+Example:
+
+If:
+
+seller_price > suggested_price * 3
+
+then:
+
+HIGH_PRICE_REVIEW
+
+unless admin configuration says otherwise.
+
+Example:
+
+Suggested:
+₹499
+
+Seller:
+₹2,000
+
+Ratio:
+4x
+
+Show:
+
+"Price is significantly above the AI-recommended range."
+
+Require seller confirmation or admin review depending on settings.
+
+============================================================
+30. SELLER CONFIRMATION
+============================================================
+
+If seller sets an unusually high but still allowed price:
+
+Show:
+
+"Your price is significantly above the suggested range."
+
+Suggested:
+₹499
+
+Your price:
+₹1,999
+
+Maximum:
+₹2,499
+
+Checkbox:
+
+"I understand that this price is above the recommended range."
+
+Then:
+
+[Continue]
+
+Do not automatically accuse the seller of fraud.
+
+============================================================
+31. PRICE SHOULD NEVER BE BASED ONLY ON GEMINI
+============================================================
+
+Gemini can be manipulated.
+
+Example seller may upload:
+
+"Premium Ultimate Billionaire Course"
+
+Gemini could misunderstand value.
+
+Therefore backend must independently calculate:
+
+- content depth
+- quality
+- completeness
+- file details
+- category
+- complexity
+- asset count
+- uniqueness
+- seller status
+- marketplace rules
+
+This is the actual price ceiling.
+
+============================================================
+32. QUALITY + PRICE + DUPLICATE RULE
+============================================================
+
+Final publication eligibility:
+
+Authenticated
+AND
+authorized
+AND
+malware clean
+AND
+duplicate check passed
+AND
+quality check passed
+AND
+price <= maximum_allowed_price
+AND
+required metadata present
+
+Only then:
+
+PUBLISHED
+
+============================================================
+33. PRODUCT CARD
+============================================================
+
+Current screenshot shows:
+
+AI Quality
+Verified
+No reviews
+Price
+
+Keep:
+
+AI Quality
+
+Add subtle:
+
+"Fair price range" only where useful.
+
+Do NOT clutter product cards with:
+
+Maximum allowed price
+
+Internal price score
+
+Fraud score
+
+Pricing formula
+
+Only show seller's actual price.
+
+============================================================
+34. PRODUCT DETAILS
+============================================================
+
+Buyer can see:
+
+Price:
+₹599
+
+Optional:
+
+"Typical range: ₹399–₹799"
+
+This is optional.
+
+Do NOT show:
+
+Platform ceiling:
+₹2,499
+
+The maximum ceiling is a marketplace protection mechanism, not necessary buyer-facing information.
+
+============================================================
+35. AI PRICING EXPLANATION
+============================================================
+
+Seller should be able to see WHY the price was suggested.
+
+Example:
+
+Suggested price:
+₹599
+
+Based on:
+
+✓ 42-page content
+✓ Good completeness
+✓ Intermediate difficulty
+✓ Structured chapters
+✓ Practical examples
+✓ Quality score 84
+✓ Programming category
+
+This gives the seller transparency.
+
+============================================================
+36. LOW-CONTENT FILE EXAMPLE
+============================================================
+
+For:
+
+DKM Details.txt
+
+12 B
+
+content:
+"DKM Details."
+
+Quality:
+Very Low / low
+
+Pricing:
+
+Suggested:
+₹10
+
+Maximum:
+₹100
+
+If seller tries:
+₹1,00,000
+
+Result:
+
+BLOCKED
+
+Message:
+
+"This price is not supported by the available product content."
+
+============================================================
+37. SMALL FILE SHOULD NOT AUTOMATICALLY BE VALUED LOW
+============================================================
+
+Counterexample:
+
+A small icon pack can have real value.
+
+Therefore the engine must look at:
+
+asset count
+type
+quality
+usefulness
+content
+
+not simply:
+
+file size.
+
+============================================================
+38. CATEGORY-SPECIFIC LOGIC
+============================================================
+
+Implement configurable pricing profiles.
+
+Example:
+
+DOCUMENT:
+content-driven
+
+COURSE:
+depth + modules + exercises
+
+TEMPLATE:
+usability + assets
+
+SOURCE CODE:
+complexity + modules + documentation
+
+DESIGN ASSET:
+asset count + type + quality
+
+SPREADSHEET:
+sheets + formulas + complexity
+
+IMAGE:
+resolution + asset pack count + quality
+
+Do not apply one generic formula blindly to every content type.
+
+============================================================
+39. PRICE CURRENCY
+============================================================
+
+Current project is India-focused.
+
+Use INR / ₹.
+
+All prices must be stored using a safe numeric representation.
+
+Prefer integer paise internally where appropriate.
+
+Example:
+
+₹499
+stored as:
+49900 paise
+
+Never use floating-point arithmetic for financial values.
+
+============================================================
+40. PAYMENT INTEGRATION
+============================================================
+
+The maximum allowed price must be checked BEFORE payment creation.
+
+Do NOT allow:
+
+seller listing:
+₹5,00,000
+
+frontend displays:
+₹2,499
+
+backend charges:
+₹5,00,000
+
+Price must be consistent.
+
+When creating payment:
+retrieve current product price from database.
+
+Do NOT trust frontend price.
+
+============================================================
+41. PRICE TAMPERING PROTECTION
+============================================================
+
+Buyer/client must NOT be able to modify:
+
+price
+
+during checkout.
+
+The backend must calculate:
+
+order.total
+
+from:
+
+product.current_price
+
+Not from frontend request.
+
+============================================================
+42. DATABASE FIELDS
+============================================================
+
+Add or maintain:
+
+products:
+
+price
+currency
+suggested_price
+suggested_price_min
+suggested_price_max
+maximum_allowed_price
+value_score
+price_risk_level
+price_status
+
+Potential statuses:
+
+PRICE_VALID
+PRICE_REVIEW
+PRICE_EXCEEDED
+ADMIN_OVERRIDE
+
+Store:
+
+pricing_model_version
+
+so future pricing changes can be tracked.
+
+============================================================
+43. PRICE AUDIT LOG
+============================================================
+
+Record:
+
+PRICE_CALCULATED
+PRICE_UPDATED
+PRICE_LIMIT_EXCEEDED
+HIGH_PRICE_FLAGGED
+PRICE_REVIEW_CREATED
+PRICE_APPROVED
+PRICE_REJECTED
+ADMIN_PRICE_OVERRIDE
+
+Store:
+
+user_id
+product_id
+old_price
+new_price
+suggested_price
+maximum_allowed_price
+reason
+timestamp
+
+============================================================
+44. ADMIN OVERRIDE
+============================================================
+
+Admin may override the normal maximum in legitimate cases.
+
+Example:
+
+Professional enterprise source-code package.
+
+Admin can:
+
+Approve exception
+
+But admin must provide:
+
+override_reason
+
+Store:
+
+ADMIN_PRICE_OVERRIDE
+
+This prevents invisible exceptions.
+
+============================================================
+45. FRAUD PROTECTION
+============================================================
+
+An extremely high requested price should also contribute to the existing listing-risk engine.
+
+Example:
+
+High price + low quality + new seller + duplicate similarity
+
+→ high listing risk
+
+Do NOT call it fraud automatically.
+
+Use:
+
+"High-risk listing"
+
+"Manual review required"
+
+============================================================
+46. PRICE RULE CONFIGURATION
+============================================================
+
+Do not scatter numbers through the code.
+
+Create:
+
+pricing_config.py
+
+or database settings.
+
+Example:
+
+MIN_PRICE_INR=10
+
+GLOBAL_MAX_PRICE_INR=100000
+
+HIGH_PRICE_MULTIPLIER=3
+
+QUALITY_LOW_THRESHOLD=40
+
+PRICE_REVIEW_MULTIPLIER=3
+
+CATEGORY_MAX_PRICE_INR = {
+  "Programming": 25000,
+  "Design": 20000,
+  "Documents": 10000,
+  "Education": 15000,
+  "Templates": 10000,
+  "Graphics": 20000,
+  "Business": 20000,
+  "Finance": 20000,
+  "Other": 5000
+}
+
+These are starting defaults.
+
+Make them editable.
+
+============================================================
+47. TESTS
+============================================================
+
+Create tests for:
+
+TEST 1:
+12-byte TXT
+
+Expected:
+very low price ceiling
+
+TEST 2:
+Empty PDF
+
+Expected:
+price blocked/review
+
+TEST 3:
+50-page good PDF
+
+Expected:
+higher ceiling than empty TXT
+
+TEST 4:
+High-quality source-code project
+
+Expected:
+appropriate higher ceiling
+
+TEST 5:
+Design asset bundle
+
+Expected:
+asset-count-aware ceiling
+
+TEST 6:
+Seller enters price below minimum
+
+Expected:
+blocked
+
+TEST 7:
+Seller enters price above maximum
+
+Expected:
+blocked
+
+TEST 8:
+Seller enters price within range
+
+Expected:
+allowed
+
+TEST 9:
+Seller changes price after publishing
+
+Expected:
+revalidated
+
+TEST 10:
+Frontend tampers with price
+
+Expected:
+backend rejects
+
+TEST 11:
+Payment request tampers with price
+
+Expected:
+backend uses database price
+
+TEST 12:
+High price but within maximum
+
+Expected:
+potential review flag
+
+TEST 13:
+Admin override
+
+Expected:
+allowed with audit log
+
+TEST 14:
+Existing unrealistic products
+
+Expected:
+recalculated and flagged
+
+============================================================
+48. UI TESTS
+============================================================
+
+Seller create/edit product page should show:
+
+Product price
+
+Suggested:
+₹499-₹799
+
+Recommended:
+₹599
+
+Maximum:
+₹2,499
+
+If valid:
+
+✓ Price within marketplace limits
+
+If invalid:
+
+✕ Price exceeds marketplace limit
+
+The Publish button must not proceed while invalid.
+
+============================================================
+49. RESPONSIVE UI
+============================================================
+
+Make pricing cards responsive.
+
+Desktop:
+
+Suggested    Recommended    Maximum
+
+Mobile:
+
+Suggested price
+₹499–₹799
+
+Recommended
+₹599
+
+Maximum allowed
+₹2,499
+
+============================================================
+50. IMPORTANT UX LANGUAGE
+============================================================
+
+Do NOT say:
+
+"Your file is not worth ₹10,000."
+
+Instead say:
+
+"This price exceeds the current marketplace limit for this product."
+
+Do NOT insult sellers.
+
+Use transparent, neutral language.
+
+============================================================
+51. FINAL PRODUCT FLOW
+============================================================
+
+SELLER:
+
+Upload file
+↓
+SHA-256
+↓
+Duplicate detection
+↓
+Content extraction
+↓
+Gemini metadata
+↓
+AI quality score
+↓
+Value analysis
+↓
+Suggested price
+↓
+Maximum price
+↓
+Seller chooses price
+↓
+Backend validates price
+↓
+Security review
+↓
+Publish
+
+============================================================
+52. BUYER:
+
+Buyer sees:
+
+Product
+₹599
+
+AI Quality:
+84 / 100
+
+Reviews:
+4.7 ★ (real verified reviews)
+
+Secure delivery
+
+Buy Now
+
+Buyer NEVER needs to know:
+- pricing formula
+- price ceiling
+- internal value score
+- fraud score
+- SHA-256
+- HMAC
+- storage internals
+
+============================================================
+53. IMPORTANT: NO FAKE NUMBERS
+============================================================
+
+Do not hardcode:
+
+4.8 reviews
+12 reviews
+₹500 suggested
+₹2,500 max
+
+unless those values are actually calculated.
+
+All visible pricing values must come from the backend.
+
+All review values must come from the database.
+
+All quality scores must come from the quality system.
+
+============================================================
+54. EXISTING PRODUCT MIGRATION
+============================================================
+
+Create a script:
+
+scripts/recalculate_pricing.py
+
+Run it against current products.
+
+For each:
+
+- extract/refresh content statistics
+- load quality analysis
+- determine category
+- calculate value score
+- calculate suggested price
+- calculate maximum price
+- calculate price risk
+- flag suspicious prices
+
+Generate report:
+
+products_repriced/reviewed
+
+Do NOT silently overwrite seller prices without a migration strategy.
+
+For existing products above the new ceiling:
+
+status:
+PRICE_REVIEW
+
+Admin decides.
+
+============================================================
+55. FINAL ACCEPTANCE CRITERIA
+============================================================
+
+The implementation is complete only when:
+
+[ ] Dynamic pricing engine exists
+[ ] Suggested price exists
+[ ] Maximum allowed price exists
+[ ] Minimum allowed price exists
+[ ] Quality affects price ceiling
+[ ] Content depth affects price
+[ ] File details affect pricing appropriately
+[ ] Category affects pricing
+[ ] Content type affects pricing
+[ ] Asset count can affect pricing
+[ ] Gemini suggested pricing exists
+[ ] Backend is authoritative
+[ ] Frontend cannot bypass price limit
+[ ] Checkout cannot modify product price
+[ ] High-price listings can be flagged
+[ ] Admin can review pricing
+[ ] Admin override is audited
+[ ] Existing unrealistic prices are detected
+[ ] 12-byte TXT cannot be priced at ₹1,00,000
+[ ] Genuine higher-value products can have higher limits
+[ ] File size alone does not determine value
+[ ] Pricing configuration is centralized
+[ ] Tests pass
+[ ] Lint passes
+[ ] Production build passes
+
+============================================================
+56. FINAL VERIFICATION
+============================================================
+
+After implementing:
+
+1. Create a tiny TXT file containing:
+"DKM Details."
+
+2. Upload it.
+
+3. Confirm:
+very low quality/value
+
+4. Try:
+₹1,00,000
+
+Expected:
+BLOCKED
+
+5. Create a real multi-page document with meaningful content.
+
+6. Upload it.
+
+7. Confirm:
+higher suggested price
+higher maximum
+
+8. Try price within range.
+
+Expected:
+ALLOWED
+
+9. Try price above maximum.
+
+Expected:
+BLOCKED
+
+10. Modify product price after publication.
+
+Expected:
+revalidated.
+
+11. Attempt frontend price tampering.
+
+Expected:
+backend rejects.
+
+12. Attempt payment price tampering.
+
+Expected:
+backend rejects.
+
+13. Check admin pricing queue.
+
+14. Run tests.
+
+15. Run:
+npm run lint
+npm run build
+
+16. Run backend pytest.
+
+Fix all errors.
+
+============================================================
+57. FINAL REPORT
+============================================================
+
+After implementing, report:
+
+1. Pricing engine architecture
+2. Pricing formula
+3. Gemini pricing prompt
+4. Database changes
+5. Existing product migration
+6. API changes
+7. Frontend changes
+8. Admin controls
+9. Tests
+10. Build/lint results
+
+Do not simply explain what should be done.
+
+Inspect the existing SecureMarket codebase, implement the complete feature, test it, and fix any errors.
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-09-13T00:49:11+05:30.
+
+The user has uploaded 4 image(s):
+- C:/Users/Nitro 5/.gemini/antigravity/brain/933c16d0-d29e-48c9-9bfe-99dfc67fd959/.user_uploaded/media_1789240569455.png
+- C:/Users/Nitro 5/.gemini/antigravity/brain/933c16d0-d29e-48c9-9bfe-99dfc67fd959/.user_uploaded/media_1789240569460.png
+- C:/Users/Nitro 5/.gemini/antigravity/brain/933c16d0-d29e-48c9-9bfe-99dfc67fd959/.user_uploaded/media_1789240569499.png
+- C:/Users/Nitro 5/.gemini/antigravity/brain/933c16d0-d29e-48c9-9bfe-99dfc67fd959/.user_uploaded/media_1789240619365.png
+You can embed these images in an artifact if you need the USER to review them.
+</ADDITIONAL_METADATA>

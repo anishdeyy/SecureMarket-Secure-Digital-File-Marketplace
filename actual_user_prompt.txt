@@ -1,0 +1,164 @@
+<USER_REQUEST>
+sha file should not be visible to anyone change this to other things . it is displaced to buyer and seller both it is a backend part that not be visible . also after i buy the product i cant write any review to this product that would save and show to everyone.
+
+I need you to make TWO IMPORTANT product-detail and marketplace changes in the existing SecureMarket project.
+
+I have provided screenshots of the current UI showing the problems.
+
+============================================================
+PART A — HIDE SHA-256 AND INTERNAL CRYPTOGRAPHIC DETAILS
+============================================================
+
+CURRENT PROBLEM:
+
+The product detail page currently exposes technical security implementation details directly to buyers and sellers.
+
+Examples currently visible:
+
+- SHA-256 Verified
+- Cryptographic Hash
+- SHA-256 Digest
+- Cryptographic File Authenticity
+- Integrity Seal
+- HMAC-Protected
+- Live Server-Side Re-hash Audit
+- Copy Digest
+- Re-hash File Now
+
+The full SHA-256 digest is also displayed in the UI.
+
+THIS IS NOT DESIRED.
+
+SHA-256 is an INTERNAL BACKEND SECURITY/INTEGRITY MECHANISM.
+
+It must NOT be exposed to normal buyers or sellers.
+
+============================================================
+A1. SHA-256 MUST REMAIN IN THE BACKEND
+============================================================
+
+DO NOT remove SHA-256 functionality.
+
+Continue using SHA-256 internally for:
+
+- exact duplicate detection
+- file integrity verification
+- upload validation
+- backend audit
+- file fingerprinting
+- integrity checks
+- duplicate-content protection
+
+But do NOT display the actual hash to:
+
+- buyer
+- seller
+- public marketplace visitor
+
+The SHA-256 value must remain internal.
+
+============================================================
+A2. REMOVE FROM PUBLIC / BUYER / SELLER UI
+============================================================
+
+Remove all visible occurrences of:
+
+- SHA-256 Digest
+- SHA-256 Hash
+- Cryptographic Hash
+- Full
+<truncated 59005 bytes>
+====
+
+After implementing:
+
+1. Create a tiny TXT file containing:
+"DKM Details."
+
+2. Upload it.
+
+3. Confirm:
+very low quality/value
+
+4. Try:
+₹1,00,000
+
+Expected:
+BLOCKED
+
+5. Create a real multi-page document with meaningful content.
+
+6. Upload it.
+
+7. Confirm:
+higher suggested price
+higher maximum
+
+8. Try price within range.
+
+Expected:
+ALLOWED
+
+9. Try price above maximum.
+
+Expected:
+BLOCKED
+
+10. Modify product price after publication.
+
+Expected:
+revalidated.
+
+11. Attempt frontend price tampering.
+
+Expected:
+backend rejects.
+
+12. Attempt payment price tampering.
+
+Expected:
+backend rejects.
+
+13. Check admin pricing queue.
+
+14. Run tests.
+
+15. Run:
+npm run lint
+npm run build
+
+16. Run backend pytest.
+
+Fix all errors.
+
+============================================================
+57. FINAL REPORT
+============================================================
+
+After implementing, report:
+
+1. Pricing engine architecture
+2. Pricing formula
+3. Gemini pricing prompt
+4. Database changes
+5. Existing product migration
+6. API changes
+7. Frontend changes
+8. Admin controls
+9. Tests
+10. Build/lint results
+
+Do not simply explain what should be done.
+
+Inspect the existing SecureMarket codebase, implement the complete feature, test it, and fix any errors.
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-09-13T00:49:11+05:30.
+
+The user has uploaded 4 image(s):
+- C:/Users/Nitro 5/.gemini/antigravity/brain/933c16d0-d29e-48c9-9bfe-99dfc67fd959/.user_uploaded/media_1789240569455.png
+- C:/Users/Nitro 5/.gemini/antigravity/brain/933c16d0-d29e-48c9-9bfe-99dfc67fd959/.user_uploaded/media_1789240569460.png
+- C:/Users/Nitro 5/.gemini/antigravity/brain/933c16d0-d29e-48c9-9bfe-99dfc67fd959/.user_uploaded/media_1789240569499.png
+- C:/Users/Nitro 5/.gemini/antigravity/brain/933c16d0-d29e-48c9-9bfe-99dfc67fd959/.user_uploaded/media_1789240619365.png
+You can embed these images in an artifact if you need the USER to review them.
+</ADDITIONAL_METADATA>

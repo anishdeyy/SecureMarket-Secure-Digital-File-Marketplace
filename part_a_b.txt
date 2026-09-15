@@ -1,0 +1,1954 @@
+PART A — HIDE SHA-256 AND INTERNAL CRYPTOGRAPHIC DETAILS
+
+============================================================
+
+
+
+CURRENT PROBLEM:
+
+
+
+The product detail page currently exposes technical security implementation details directly to buyers and sellers.
+
+
+
+Examples currently visible:
+
+
+
+- SHA-256 Verified
+
+- Cryptographic Hash
+
+- SHA-256 Digest
+
+- Cryptographic File Authenticity
+
+- Integrity Seal
+
+- HMAC-Protected
+
+- Live Server-Side Re-hash Audit
+
+- Copy Digest
+
+- Re-hash File Now
+
+
+
+The full SHA-256 digest is also displayed in the UI.
+
+
+
+THIS IS NOT DESIRED.
+
+
+
+SHA-256 is an INTERNAL BACKEND SECURITY/INTEGRITY MECHANISM.
+
+
+
+It must NOT be exposed to normal buyers or sellers.
+
+
+
+============================================================
+
+A1. SHA-256 MUST REMAIN IN THE BACKEND
+
+============================================================
+
+
+
+DO NOT remove SHA-256 functionality.
+
+
+
+Continue using SHA-256 internally for:
+
+
+
+- exact duplicate detection
+
+- file integrity verification
+
+- upload validation
+
+- backend audit
+
+- file fingerprinting
+
+- integrity checks
+
+- duplicate-content protection
+
+
+
+But do NOT display the actual hash to:
+
+
+
+- buyer
+
+- seller
+
+- public marketplace visitor
+
+
+
+The SHA-256 value must remain internal.
+
+
+
+============================================================
+
+A2. REMOVE FROM PUBLIC / BUYER / SELLER UI
+
+============================================================
+
+
+
+Remove all visible occurrences of:
+
+
+
+- SHA-256 Digest
+
+- SHA-256 Hash
+
+- Cryptographic Hash
+
+- Full hash string
+
+- Copy Digest
+
+- Re-hash File Now
+
+- Cryptographic File Authenticity
+
+- HMAC-Protected
+
+- HMAC seal
+
+- Internal cryptographic implementation wording
+
+- Internal storage/security implementation details
+
+
+
+from:
+
+
+
+- public product details
+
+- buyer product page
+
+- seller product page
+
+- seller dashboard
+
+- buyer dashboard
+
+- marketplace cards
+
+- home page
+
+- download page
+
+- purchase success page
+
+
+
+Do NOT expose internal hash values through normal frontend API responses either.
+
+
+
+If the frontend receives the complete SHA-256 hash but simply hides it with CSS, that is NOT sufficient.
+
+
+
+DO NOT SEND THE HASH TO THE PUBLIC CLIENT AT ALL unless an authenticated admin/security endpoint explicitly requires it.
+
+
+
+Security-sensitive backend data should not be returned unnecessarily.
+
+
+
+============================================================
+
+A3. REPLACE TECHNICAL SECURITY SECTION
+
+============================================================
+
+
+
+The current:
+
+
+
+"Integrity & Security"
+
+
+
+section is too technical.
+
+
+
+Replace it with a buyer-friendly section called:
+
+
+
+"Product & Download Protection"
+
+
+
+OR:
+
+
+
+"Security & Delivery"
+
+
+
+Use simple customer-friendly cards.
+
+
+
+Example:
+
+
+
+------------------------------------------------
+
+
+
+SECURITY & DELIVERY
+
+
+
+✓ Malware scan passed
+
+The uploaded file passed automated malware checks.
+
+
+
+✓ Secure payment
+
+Your payment is verified before download access is granted.
+
+
+
+✓ Protected download
+
+Your purchased file is delivered through temporary secure access.
+
+
+
+✓ File integrity protected
+
+The marketplace verifies that the stored file has not been unexpectedly modified.
+
+
+
+------------------------------------------------
+
+
+
+IMPORTANT:
+
+
+
+Do NOT mention:
+
+- SHA-256
+
+- HMAC
+
+- cryptographic seal
+
+- hash digest
+
+- AWS
+
+- S3
+
+- internal object keys
+
+
+
+The implementation remains in the backend, but users only see the resulting trust/status.
+
+
+
+============================================================
+
+A4. SECURITY WORDING
+
+============================================================
+
+
+
+Replace technical language:
+
+
+
+BAD:
+
+
+
+"SHA-256 Integrity Verification"
+
+
+
+GOOD:
+
+
+
+"File integrity verified"
+
+
+
+BAD:
+
+
+
+"Cryptographic Hash"
+
+
+
+GOOD:
+
+
+
+"File verified"
+
+
+
+BAD:
+
+
+
+"Integrity Seal HMAC-Protected"
+
+
+
+GOOD:
+
+
+
+"Protected file delivery"
+
+
+
+BAD:
+
+
+
+"Live Server-Side Re-hash Audit"
+
+
+
+GOOD:
+
+
+
+"File verification active"
+
+
+
+BAD:
+
+
+
+"256-bit SSL encrypted checkout"
+
+
+
+Do not make unsupported cryptographic claims.
+
+
+
+Use:
+
+
+
+"Secure checkout"
+
+
+
+or:
+
+
+
+"Protected payment processing"
+
+
+
+ONLY show a status when the backend actually confirms it.
+
+
+
+============================================================
+
+A5. PRODUCT PAGE FINAL SECURITY UI
+
+============================================================
+
+
+
+Recommended buyer-facing layout:
+
+
+
+SECURITY & DELIVERY
+
+
+
+┌─────────────────────────────────────────────┐
+
+│ ✓ Malware scan passed                      │
+
+│ Uploaded file passed security scanning.    │
+
+└─────────────────────────────────────────────┘
+
+
+
+┌─────────────────────────────────────────────┐
+
+│ ✓ File integrity verified                  │
+
+│ The marketplace verifies the stored file.  │
+
+└─────────────────────────────────────────────┘
+
+
+
+┌─────────────────────────────────────────────┐
+
+│ ✓ Secure payment                           │
+
+│ Purchase is verified before access.        │
+
+└─────────────────────────────────────────────┘
+
+
+
+┌─────────────────────────────────────────────┐
+
+│ ✓ Protected download                       │
+
+│ Purchased files are delivered securely.    │
+
+└─────────────────────────────────────────────┘
+
+
+
+This is what the buyer needs to know.
+
+
+
+============================================================
+
+A6. SELLER UI
+
+============================================================
+
+
+
+Seller should see useful operational statuses, but not raw cryptography.
+
+
+
+Example:
+
+
+
+Product Security
+
+
+
+✓ Malware scan passed
+
+✓ File integrity verified
+
+✓ Duplicate check passed
+
+✓ Ready for marketplace
+
+
+
+Optional:
+
+
+
+"Last security check: Today, 11:42 PM"
+
+
+
+Do NOT show:
+
+
+
+SHA-256:
+
+8f84c...
+
+
+
+Do NOT show HMAC details.
+
+
+
+Do NOT show backend storage keys.
+
+
+
+============================================================
+
+A7. ADMIN / INTERNAL SECURITY UI
+
+============================================================
+
+
+
+IMPORTANT:
+
+
+
+Admins may still need technical information.
+
+
+
+Keep detailed information available ONLY through a restricted admin/security view.
+
+
+
+For example:
+
+
+
+Admin → Security Diagnostics
+
+
+
+Can show:
+
+
+
+SHA-256:
+
+<full hash>
+
+
+
+Integrity check:
+
+PASSED
+
+
+
+Storage:
+
+verified
+
+
+
+Re-hash:
+
+available
+
+
+
+Duplicate fingerprint:
+
+match/no match
+
+
+
+But this endpoint must require ADMIN role.
+
+
+
+Do not expose it to:
+
+BUYER
+
+SELLER
+
+PUBLIC
+
+
+
+============================================================
+
+A8. API SECURITY
+
+============================================================
+
+
+
+Inspect product APIs.
+
+
+
+Do NOT return something like:
+
+
+
+{
+
+  "sha256_hash": "...",
+
+  "hmac_signature": "...",
+
+  "storage_key": "..."
+
+}
+
+
+
+to normal buyer/seller product endpoints.
+
+
+
+Instead return:
+
+
+
+{
+
+  "security_status": {
+
+    "malware_scan": "passed",
+
+    "integrity_verified": true,
+
+    "secure_delivery": true
+
+  }
+
+}
+
+
+
+Internal values remain server-side.
+
+
+
+Create separate admin-only endpoint if technical information is required.
+
+
+
+Example:
+
+
+
+GET /api/admin/products/{id}/security-details
+
+
+
+Protected by:
+
+
+
+ADMIN role only.
+
+
+
+============================================================
+
+A9. DATABASE
+
+============================================================
+
+
+
+DO NOT delete the SHA-256 database field.
+
+
+
+Keep:
+
+
+
+sha256_hash
+
+
+
+Keep:
+
+
+
+storage_key
+
+
+
+Keep:
+
+
+
+integrity data
+
+
+
+Keep:
+
+
+
+duplicate fingerprint
+
+
+
+But these must not be returned through normal public product queries.
+
+
+
+Separate:
+
+PUBLIC_PRODUCT_SCHEMA
+
+
+
+from:
+
+
+
+ADMIN_SECURITY_SCHEMA
+
+
+
+Example:
+
+
+
+PublicProductSchema:
+
+- title
+
+- description
+
+- price
+
+- category
+
+- seller
+
+- quality score
+
+- file type
+
+- file size
+
+- language
+
+- version
+
+- security status
+
+
+
+AdminSecuritySchema:
+
+- sha256_hash
+
+- storage_key
+
+- normalized_hash
+
+- scan details
+
+- integrity details
+
+- internal audit data
+
+
+
+============================================================
+
+PART B — IMPLEMENT COMPLETE VERIFIED BUYER REVIEW SYSTEM
+
+============================================================
+
+
+
+CURRENT PROBLEM:
+
+
+
+The product page currently shows:
+
+
+
+"Reviews (0)"
+
+
+
+and:
+
+
+
+"No reviews yet"
+
+
+
+but even after successfully purchasing the product, the buyer cannot submit a review.
+
+
+
+THIS MUST BE FIXED.
+
+
+
+A buyer who has actually purchased the product must be able to submit a review.
+
+
+
+The review must be:
+
+
+
+- saved in PostgreSQL
+
+- associated with the buyer
+
+- associated with the product
+
+- associated with the verified purchase/order
+
+- visible to other users
+
+- counted in the review total
+
+- included in the average rating
+
+- shown on the product page
+
+- prevented from duplicate review submission unless editing is explicitly supported
+
+
+
+============================================================
+
+B1. VERIFIED PURCHASE REQUIREMENT
+
+============================================================
+
+
+
+Only a user with a successful completed purchase can review a product.
+
+
+
+Backend rule:
+
+
+
+User must have:
+
+
+
+order.status == PAID
+
+
+
+and:
+
+
+
+order contains product
+
+
+
+Only then:
+
+
+
+can_review = true
+
+
+
+A user who has NOT purchased the product must NOT be able to create a review.
+
+
+
+This must be enforced on the backend.
+
+
+
+Do NOT rely only on hiding the review button on the frontend.
+
+
+
+============================================================
+
+B2. REVIEW DATABASE MODEL
+
+============================================================
+
+
+
+Inspect the current review schema.
+
+
+
+Create or update:
+
+
+
+reviews
+
+
+
+Fields:
+
+
+
+id
+
+product_id
+
+user_id
+
+order_id
+
+rating
+
+comment
+
+created_at
+
+updated_at
+
+
+
+Recommended:
+
+
+
+verified_purchase
+
+boolean
+
+
+
+Example:
+
+
+
+review:
+
+product_id = X
+
+user_id = Y
+
+order_id = Z
+
+rating = 5
+
+comment = "Very useful template."
+
+verified_purchase = true
+
+
+
+============================================================
+
+B3. UNIQUE REVIEW RULE
+
+============================================================
+
+
+
+By default:
+
+
+
+ONE REVIEW PER PURCHASED PRODUCT PER USER.
+
+
+
+Add a database-level unique constraint such as:
+
+
+
+unique(user_id, product_id)
+
+
+
+OR if your business logic supports multiple orders:
+
+
+
+unique(user_id, product_id, order_id)
+
+
+
+For this project, prefer:
+
+
+
+unique(user_id, product_id)
+
+
+
+This prevents duplicate review spam.
+
+
+
+If the buyer already reviewed the product:
+
+
+
+show:
+
+
+
+"You already reviewed this product."
+
+
+
+and allow:
+
+
+
+[Edit Review]
+
+
+
+rather than creating another review.
+
+
+
+============================================================
+
+B4. REVIEW API
+
+============================================================
+
+
+
+Create/verify these APIs.
+
+
+
+GET:
+
+
+
+GET /api/products/{product_id}/reviews
+
+
+
+Returns:
+
+
+
+reviews
+
+average_rating
+
+review_count
+
+
+
+POST:
+
+
+
+POST /api/products/{product_id}/reviews
+
+
+
+Request:
+
+
+
+{
+
+  "rating": 5,
+
+  "comment": "Excellent resource."
+
+}
+
+
+
+Backend must:
+
+
+
+1. Authenticate user.
+
+2. Verify product exists.
+
+3. Verify successful purchase.
+
+4. Verify order contains product.
+
+5. Verify user owns that order.
+
+6. Check user has not already reviewed.
+
+7. Validate rating.
+
+8. Validate comment.
+
+9. Create review.
+
+10. Return saved review.
+
+
+
+============================================================
+
+B5. EDIT REVIEW
+
+============================================================
+
+
+
+Implement:
+
+
+
+PUT /api/reviews/{review_id}
+
+
+
+Only the review owner may edit their review.
+
+
+
+Allow:
+
+
+
+rating
+
+comment
+
+
+
+Do NOT allow editing:
+
+
+
+user_id
+
+product_id
+
+order_id
+
+verified_purchase
+
+
+
+These are controlled by backend.
+
+
+
+============================================================
+
+B6. DELETE REVIEW
+
+============================================================
+
+
+
+Optional but recommended:
+
+
+
+DELETE /api/reviews/{review_id}
+
+
+
+Only:
+
+- review owner
+
+- admin
+
+
+
+may delete.
+
+
+
+Admin deletion must be logged.
+
+
+
+============================================================
+
+B7. RATING VALIDATION
+
+============================================================
+
+
+
+Rating must be integer:
+
+
+
+1
+
+2
+
+3
+
+4
+
+5
+
+
+
+No:
+
+
+
+0
+
+6
+
+4.5
+
+10
+
+
+
+unless the existing UX explicitly uses half-stars.
+
+
+
+For this project, use:
+
+
+
+1-5 integer stars.
+
+
+
+Backend validates it.
+
+
+
+============================================================
+
+B8. COMMENT VALIDATION
+
+============================================================
+
+
+
+Validate:
+
+
+
+- minimum reasonable length
+
+- maximum length
+
+- trim whitespace
+
+- reject empty comments if required
+
+- prevent basic XSS
+
+
+
+Never render raw HTML from reviews.
+
+
+
+Treat review content as plain text.
+
+
+
+============================================================
+
+B9. REVIEW UI FOR BUYER WHO PURCHASED
+
+============================================================
+
+
+
+After purchase, the buyer should see:
+
+
+
+"Enjoying this product?"
+
+
+
+or:
+
+
+
+"Share your experience"
+
+
+
+Then:
+
+
+
+★★★★★
+
+
+
+"Write a review..."
+
+
+
+Textarea.
+
+
+
+Button:
+
+
+
+[Submit Review]
+
+
+
+Example:
+
+
+
+Rate this product
+
+
+
+☆ ☆ ☆ ☆ ☆
+
+
+
+[ Tell other buyers what you think... ]
+
+
+
+[Submit Review]
+
+
+
+After submission:
+
+
+
+"Review published"
+
+
+
+Then the new review should immediately appear.
+
+
+
+============================================================
+
+B10. REVIEW TAB
+
+============================================================
+
+
+
+The current tab:
+
+
+
+Reviews (0)
+
+
+
+must become dynamically driven.
+
+
+
+If there are no reviews:
+
+
+
+Reviews (0)
+
+
+
+"No reviews yet"
+
+
+
+If there are 3 reviews:
+
+
+
+Reviews (3)
+
+
+
+Average:
+
+
+
+4.7
+
+
+
+Only calculate this from real database reviews.
+
+
+
+DO NOT use fake values.
+
+
+
+============================================================
+
+B11. VERIFIED PURCHASE BADGE
+
+============================================================
+
+
+
+Every genuine buyer review should show:
+
+
+
+✓ Verified Purchase
+
+
+
+Example:
+
+
+
+★★★★★
+
+"Very useful presentation and easy to understand."
+
+
+
+✓ Verified Purchase
+
+buyer1
+
+Sep 12, 2026
+
+
+
+This badge must be generated by the backend because it is based on purchase verification.
+
+
+
+Do NOT allow the frontend to claim:
+
+
+
+"Verified Purchase"
+
+
+
+without backend confirmation.
+
+
+
+============================================================
+
+B12. REVIEW DISPLAY
+
+============================================================
+
+
+
+Product page:
+
+
+
+Reviews
+
+
+
+4.8
+
+★★★★★
+
+12 reviews
+
+
+
+ONLY if:
+
+12 real reviews exist.
+
+
+
+Example:
+
+
+
+4.8
+
+★★★★★
+
+12 verified reviews
+
+
+
+Then list:
+
+
+
+★★★★★
+
+"Very useful resource."
+
+
+
+✓ Verified Purchase
+
+
+
+Anish
+
+Sep 12, 2026
+
+
+
+------------------------------------------------
+
+
+
+Another:
+
+
+
+★★★★☆
+
+"Good content, but could use more examples."
+
+
+
+✓ Verified Purchase
+
+
+
+Rahul
+
+Sep 11, 2026
+
+
+
+No fake reviews.
+
+
+
+============================================================
+
+B13. AVERAGE RATING
+
+============================================================
+
+
+
+Backend should calculate:
+
+
+
+average_rating
+
+
+
+from actual review records.
+
+
+
+Example:
+
+
+
+ratings:
+
+
+
+5
+
+5
+
+4
+
+4
+
+5
+
+
+
+Average:
+
+
+
+4.6
+
+
+
+Do NOT hardcode:
+
+
+
+4.8
+
+
+
+Do NOT calculate from product metadata.
+
+
+
+Do NOT take the seller-entered rating.
+
+
+
+The database is the source of truth.
+
+
+
+============================================================
+
+B14. REVIEW COUNT
+
+============================================================
+
+
+
+Review count must be:
+
+
+
+COUNT(real review rows)
+
+
+
+Do not store a fake static review count in the frontend.
+
+
+
+Either:
+
+
+
+calculate dynamically
+
+
+
+OR maintain a database aggregate carefully.
+
+
+
+Frontend receives:
+
+
+
+review_count
+
+
+
+from backend.
+
+
+
+============================================================
+
+B15. AFTER REVIEW SUBMISSION
+
+============================================================
+
+
+
+When buyer submits:
+
+
+
+POST /api/products/{id}/reviews
+
+
+
+The UI should:
+
+
+
+1. show loading state
+
+2. prevent double submission
+
+3. save review
+
+4. refresh product reviews
+
+5. recalculate average
+
+6. update review count
+
+7. show success toast
+
+8. clear/close form
+
+
+
+Example:
+
+
+
+"Your review has been published."
+
+
+
+Then:
+
+
+
+Reviews (1)
+
+
+
+5.0
+
+★★★★★
+
+1 verified review
+
+
+
+The new review appears immediately.
+
+
+
+============================================================
+
+B16. PRODUCT PAGE FOR UNPURCHASED BUYER
+
+============================================================
+
+
+
+If user has NOT purchased:
+
+
+
+Do NOT show an active review form.
+
+
+
+Instead show:
+
+
+
+"Purchase this product to leave a verified review."
+
+
+
+Button:
+
+
+
+[Buy Now]
+
+
+
+If logged out:
+
+
+
+"Sign in and purchase this product to leave a review."
+
+
+
+============================================================
+
+B17. PRODUCT PAGE FOR PURCHASED BUYER
+
+============================================================
+
+
+
+If:
+
+
+
+purchase exists
+
+AND
+
+review does not exist
+
+
+
+show:
+
+
+
+"Leave a Review"
+
+
+
+If:
+
+
+
+purchase exists
+
+AND
+
+review already exists
+
+
+
+show:
+
+
+
+"Your Review"
+
+
+
+and:
+
+
+
+[Edit Review]
+
+
+
+============================================================
+
+B18. SELLER MUST NOT REVIEW OWN PRODUCT
+
+============================================================
+
+
+
+If seller owns product:
+
+
+
+seller cannot create a review.
+
+
+
+Backend must enforce:
+
+
+
+reviewer.user_id != product.seller_id
+
+
+
+Return:
+
+
+
+"You cannot review your own product."
+
+
+
+Do not rely on frontend only.
+
+
+
+============================================================
+
+B19. ADMIN REVIEW MODERATION
+
+============================================================
+
+
+
+Create basic moderation support.
+
+
+
+Admin can:
+
+
+
+- view reviews
+
+- hide inappropriate reviews
+
+- delete reviews
+
+- restore review if appropriate
+
+
+
+Optional field:
+
+
+
+review_status
+
+
+
+ACTIVE
+
+HIDDEN
+
+DELETED
+
+
+
+Only ACTIVE reviews count toward rating.
+
+
+
+If admin hides a review:
+
+
+
+rating average and review count should recalculate from active reviews.
+
+
+
+============================================================
+
+B20. AUDIT LOGGING FOR REVIEWS
+
+============================================================
+
+
+
+Log:
+
+
+
+REVIEW_CREATED
+
+REVIEW_UPDATED
+
+REVIEW_DELETED
+
+REVIEW_HIDDEN
+
+REVIEW_RESTORED
+
+
+
+Include:
+
+
+
+user_id
+
+review_id
+
+product_id
+
+timestamp
+
+
+
+Do not log sensitive information unnecessarily.
+
+
+
+============================================================
+
