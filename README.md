@@ -1,6 +1,4 @@
-<<<<<<< HEAD
-# SecureMarket-Secure-Digital-File-Marketplace
-=======
+======
 # SecureMarket — Secure Digital Asset Marketplace
 
 SecureMarket is a production-grade, secure digital file marketplace designed for high-integrity file distribution, strict role separation, server-authoritative payments via Razorpay, and end-to-end cryptographic verification.
